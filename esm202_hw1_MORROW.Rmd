@@ -1,0 +1,115 @@
+---
+title: ESM 202 Assignment 1
+author: Keene Morrow
+date: 1/21/2020
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(janitor)
+library(here)
+library(kableExtra)
+```
+
+```{r, include = FALSE}
+# Set up
+ch_wshd_A <- 165740 # km^2
+ch_wshd_A_m <- ch_wshd_A * 1000 ^ 2 # m^2
+ch_tot_inflow <- 1833 #m/s^2
+ch_tot_V <- 68 # km^3
+ch_tot_V_m <- ch_tot_V * 10 ^ 9 # m^3
+
+# Long term nutrient inputs to rivers
+sus_char <- c("rural", "forested", "agricultural") # Susquehanna
+pot_char <- c("urban", "agricultural") # Potomac
+cho_char <- "agricultural" # Choptank
+
+# River Info
+rivers <- read_csv(here("data", "river_info.csv")) %>%
+  janitor::clean_names()
+
+# Water Quality Parameters
+wq_param <- read_csv(here("data", "wq_param.csv"))
+```
+
+### 1. Mass Balance
+
+#### a) Calculate the percent contribution of each river to the total water flux into the Chesapeake Bay. 
+```{r}
+river_contrib <- rivers %>%
+  mutate(pct_contrib = round((mean_flow_m3_s / ch_tot_inflow)*100, digits = 2)) %>%
+  select(river, pct_contrib) %>%
+  rename("Percent Contribution" = pct_contrib,
+         River = river)
+
+kable(river_contrib)%>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                ) %>% 
+  add_header_above(c("Table 1.\nPercent Contribution to Chesapeake Bay Flux by River" = 2))
+```
+
+#### b) Considering the rivers as the total inflow, what is the approximate turnover time for water in the Chesapeake Bay? Assume that tidal exchange has no net effect on the total volume of the Chesapeake Bay. 
+
+```{r}
+ch_turnover <- ch_tot_V_m / ch_tot_inflow # seconds
+
+ch_turn_days <- ch_turnover / (60 ^ 2 * 24)
+
+ch_turn_yr <- ch_turn_days / 365.25
+```
+
+The turnover time of the Chesapeake Bay is`r round(ch_turn_days, digits = 2)` days or `r round(ch_turn_yr, digits = 2)` years.
+
+#### c) What is the mean concentration (in μg/L) of total nitrogen (TN) and total phosphorus (TP) entering the Chesapeake Bay from each river (only SUS, POT and CHO) in the 1st quarter of 2010?
+
+```{r}
+# In order, SUS, POT, CHO
+tp_1980_q1 <- c(2.0, 2.0, 1.3) # total nitrogen kg/d
+tp_1980_q1 <- tp_1980_q1 * 7200 # add scale factor
+
+tp_2010_q1 <- c(1.6, 1.4, 1.5) # total nitrogen kg/d
+tp_2010_q1 <- tp_2010_q1 * 7200 # add scale factor
+
+tn_2010_q1 <- c(1.5, 1.5, 1.75) # total phosphorus kg/d
+tn_2010_q1 <- tn_2010_q1 * 7200 # add scale factor
+
+focus_rivers <- rivers %>%
+  filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
+  cbind(tp_2010_q1, tp_2010_q1, tn_2010_q1)
+
+```
+
+#### d) Express the concentrations of TN and TP also in terms of moles/L of N and P. 
+
+
+#### e) How many kg of TN and TP are being discharged into the Chesapeake Bay from each river (only SUS, POT and CHO) in the 1st quarter of 2010? 
+
+
+#### f) Approximately what fraction of the total mass of N and P is coming in as dissolved N (DN) or dissolved P (DP) in the 1st quarter of 2010?
+
+
+#### g) Calculate the total mass/day of suspended sediments being added to the Chesapeake Bay during the 1st quarter of 2010 by each river.
+
+
+### 2. Water quality (consider only the SUS, POT and CHO or as indicated)
+
+#### a) Given the molar ratio of 100:16:1 [C:N:P], which nutrient would be limiting in each river during the 1st quarter of 2010?
+
+
+#### b) Given the molar ratio of 100:16:1 [C:N:P] and given the molar ratio of C:H:O for biomass as 1:2:1, is the dissolved nitrogen during the 1st quarter of 2012 likely to deplete oxygen in the Choptank River? Assume the dissolved oxygen is 4.5 mg/L in the receiving water at the point of discharge.
+
+#### c) Free Space
+
+#### d) Given the concentrations of TN and TP, how would you classify the eutrophication potential of each of the three rivers in terms in the Chesapeake Bay in 1980 and 2010? 
+
+#### e) What other important water quality parameter(s) are important to determine the health of aquatic organisms (e.g. fish) in these three tributaries? Briefly discuss at least 5.
+
+
+#### f) Given the loadings of N and P, qualitatively discuss the likely redox conditions in the Chesapeake Bay sediments. What are the implications (briefly)? 
+
+#### g) For the data sets provided (1980 to 2010), discuss the relative improvement/degradation of each river in the Chesapeake Bay. 
