@@ -69,18 +69,41 @@ The turnover time of the Chesapeake Bay is`r round(ch_turn_days, digits = 2)` da
 
 ```{r}
 # In order, SUS, POT, CHO
-tp_1980_q1 <- c(2.0, 2.0, 1.3) # total nitrogen kg/d
-tp_1980_q1 <- tp_1980_q1 * 7200 # add scale factor
+# tp_1980_q1 <- c(2.0 * 7200, 2.0 * 7200, 1.3 * 7200) # total nitrogen kg/d
 
-tp_2010_q1 <- c(1.6, 1.4, 1.5) # total nitrogen kg/d
-tp_2010_q1 <- tp_2010_q1 * 7200 # add scale factor
-
-tn_2010_q1 <- c(1.5, 1.5, 1.75) # total phosphorus kg/d
-tn_2010_q1 <- tn_2010_q1 * 7200 # add scale factor
+tp_2010_q1_kg_d <- c(1.6 * 7200, 1.4 * 7200, 1.5 * 7200) # total nitrogen kg/d
+tn_2010_q1_kg_d <- c(1.5 * 7200, 1.5 * 7200, 1.75 * 7200) # total phosphorus kg/d
 
 focus_rivers <- rivers %>%
   filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
-  cbind(tp_2010_q1, tp_2010_q1, tn_2010_q1)
+  cbind(#tp_1980_q1,
+        tp_2010_q1_kg_d,
+        tn_2010_q1_kg_d) %>% 
+  mutate(mean_flow_L_s = mean_flow_m3_s * 1000,
+         # tp_1980_q1_ug_d = tp_1980_q1_kg_d * 10 ^ 9,
+         tp_2010_q1_ug_d = tp_2010_q1_kg_d * 10 ^ 9,
+         tn_2010_q1_ug_d = tn_2010_q1_kg_d * 10 ^ 9) %>%
+  mutate(# tp_1980_q1_ug_s = tp_1980_q1_ug_d / 86400,
+         tp_2010_q1_ug_s = tp_2010_q1_ug_d / 86400,
+         tn_2010_q1_ug_s = tn_2010_q1_ug_d / 86400) %>% 
+  mutate(#mean_conc_tp_1980_q1_ug_L = tp_1980_q1_ug_s / mean_flow_L_s,
+         mean_conc_tp_2010_q1_ug_L = tp_2010_q1_ug_s / mean_flow_L_s,
+         mean_conc_tn_2010_q1_ug_L = tn_2010_q1_ug_s / mean_flow_L_s)
+
+mean_conc_2010 <- focus_rivers %>%
+  select(river, mean_conc_tp_2010_q1_ug_L, mean_conc_tn_2010_q1_ug_L) %>%
+  mutate(mean_conc_tp_2010_q1_ug_L = round(mean_conc_tp_2010_q1_ug_L, digits = 2),
+         mean_conc_tn_2010_q1_ug_L= round(mean_conc_tn_2010_q1_ug_L, digits = 2)) %>% 
+  rename("Total Phosphorus" = mean_conc_tp_2010_q1_ug_L,
+         "Total Nitrogen" = mean_conc_tn_2010_q1_ug_L,
+         River = river)
+
+kable(mean_conc_2010)%>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                ) %>% 
+  add_header_above(c("Table 2.\nMean Concentrations (μg/L) by River\nQuarter 1, 2010" = 3))
 
 ```
 
