@@ -182,10 +182,60 @@ kable(rivers_kg_q1)%>%
 ```
 
 #### f) Approximately what fraction of the total mass of N and P is coming in as dissolved N (DN) or dissolved P (DP) in the 1st quarter of 2010?
+```{r}
+# Dissolved Phosphorus kg/day, 2010, Quarter 1, in order, SUS, POT, CHO
+dp_2010_q1_kg_d <- c(1.2 * 1600, 0.7 * 1100, 1.3 * 14)
+
+# Dissolved Nitrogen kg/day, 2010, Quarter 1, in order, SUS, POT, CHO
+dn_2010_q1_kg_d <- c(1.4 * 140000, 1.5 * 48000, 1.7 * 540)
 
 
+rivers_dis_tot <- rivers %>%
+  # only the rivers of interest
+  filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
+  # add TP, TN, DP, DN data from above
+  cbind(dp_2010_q1_kg_d,
+        tp_2010_q1_kg_d) %>%
+  mutate(dis_tot_P_2010_q1_kg_d = round((dp_2010_q1_kg_d /tp_2010_q1_kg_d), digits = 2)) %>% 
+  cbind(dn_2010_q1_kg_d,
+        tn_2010_q1_kg_d) %>%
+  mutate(dis_tot_N_2010_q1_kg_d = round((dn_2010_q1_kg_d /tn_2010_q1_kg_d), digits = 2)) %>%
+  select(river, dis_tot_P_2010_q1_kg_d, dis_tot_N_2010_q1_kg_d) %>%
+  rename(River = river,
+         "Nitrogen" = dis_tot_N_2010_q1_kg_d,
+         "Phosphorus" = dis_tot_P_2010_q1_kg_d)
+```
+
+```{r echo = FALSE}
+kable(rivers_dis_tot)%>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                ) %>% 
+  add_header_above(c("Table 5.\n Contribution of Dissolved Mass to Total Mass entering the Chesapeake Bay by River \nQuarter 1, 2010" = 3))
+```
 #### g) Calculate the total mass/day of suspended sediments being added to the Chesapeake Bay during the 1st quarter of 2010 by each river.
+```{r}
+susp_solids <- c(2.2 * 4300000, 1.75 * 4100000, 1.8 * 7100)
 
+rivers_solids <- rivers %>%
+  # only the rivers of interest
+  filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
+  # add TP, TN, DP, DN data from above
+  cbind(susp_solids) %>%
+  select(river, susp_solids) %>%
+  rename(River = river,
+         "Suspended Solids" = susp_solids)
+```
+
+```{r echo = FALSE}
+kable(rivers_solids)%>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                ) %>% 
+  add_header_above(c("Table 6.\n Contribution of Suspended Solids (kg/day) to the Chesapeake Bay by River \nQuarter 1, 2010" = 2))
+```
 
 ### 2. Water quality (consider only the SUS, POT and CHO or as indicated)
 

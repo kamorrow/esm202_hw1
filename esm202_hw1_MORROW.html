@@ -645,9 +645,142 @@ Choptank River
 </div>
 <div id="f-approximately-what-fraction-of-the-total-mass-of-n-and-p-is-coming-in-as-dissolved-n-dn-or-dissolved-p-dp-in-the-1st-quarter-of-2010" class="section level4">
 <h4>f) Approximately what fraction of the total mass of N and P is coming in as dissolved N (DN) or dissolved P (DP) in the 1st quarter of 2010?</h4>
+<pre class="r"><code># Dissolved Phosphorus kg/day, 2010, Quarter 1, in order, SUS, POT, CHO
+dp_2010_q1_kg_d &lt;- c(1.2 * 1600, 0.7 * 1100, 1.3 * 14)
+
+# Dissolved Nitrogen kg/day, 2010, Quarter 1, in order, SUS, POT, CHO
+dn_2010_q1_kg_d &lt;- c(1.4 * 140000, 1.5 * 48000, 1.7 * 540)
+
+
+rivers_dis_tot &lt;- rivers %&gt;%
+  # only the rivers of interest
+  filter(river_abb %in% c(&quot;SUS&quot;, &quot;POT&quot;, &quot;CHO&quot;)) %&gt;%
+  # add TP, TN, DP, DN data from above
+  cbind(dp_2010_q1_kg_d,
+        tp_2010_q1_kg_d) %&gt;%
+  mutate(dis_tot_P_2010_q1_kg_d = round((dp_2010_q1_kg_d /tp_2010_q1_kg_d), digits = 2)) %&gt;% 
+  cbind(dn_2010_q1_kg_d,
+        tn_2010_q1_kg_d) %&gt;%
+  mutate(dis_tot_N_2010_q1_kg_d = round((dn_2010_q1_kg_d /tn_2010_q1_kg_d), digits = 2)) %&gt;%
+  select(river, dis_tot_P_2010_q1_kg_d, dis_tot_N_2010_q1_kg_d) %&gt;%
+  rename(River = river,
+         &quot;Nitrogen&quot; = dis_tot_N_2010_q1_kg_d,
+         &quot;Phosphorus&quot; = dis_tot_P_2010_q1_kg_d)</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Table 5.<br> Contribution of Dissolved Mass to Total Mass entering the Chesapeake Bay by River <br>Quarter 1, 2010
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+River
+</th>
+<th style="text-align:right;">
+Phosphorus
+</th>
+<th style="text-align:right;">
+Nitrogen
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Susquehanna River
+</td>
+<td style="text-align:right;">
+0.17
+</td>
+<td style="text-align:right;">
+0.82
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Potomac River
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+0.75
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Choptank River
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="g-calculate-the-total-massday-of-suspended-sediments-being-added-to-the-chesapeake-bay-during-the-1st-quarter-of-2010-by-each-river." class="section level4">
 <h4>g) Calculate the total mass/day of suspended sediments being added to the Chesapeake Bay during the 1st quarter of 2010 by each river.</h4>
+<pre class="r"><code>susp_solids &lt;- c(2.2 * 4300000, 1.75 * 4100000, 1.8 * 7100)
+
+rivers_solids &lt;- rivers %&gt;%
+  # only the rivers of interest
+  filter(river_abb %in% c(&quot;SUS&quot;, &quot;POT&quot;, &quot;CHO&quot;)) %&gt;%
+  # add TP, TN, DP, DN data from above
+  cbind(susp_solids) %&gt;%
+  select(river, susp_solids) %&gt;%
+  rename(River = river,
+         &quot;Suspended Solids&quot; = susp_solids)</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Table 6.<br> Contribution of Suspended Solids (kg/day) to the Chesapeake Bay by River <br>Quarter 1, 2010
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+River
+</th>
+<th style="text-align:right;">
+Suspended Solids
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Susquehanna River
+</td>
+<td style="text-align:right;">
+9460000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Potomac River
+</td>
+<td style="text-align:right;">
+7175000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Choptank River
+</td>
+<td style="text-align:right;">
+12780
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="water-quality-consider-only-the-sus-pot-and-cho-or-as-indicated" class="section level3">
