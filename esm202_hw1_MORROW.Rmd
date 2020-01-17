@@ -44,7 +44,10 @@ river_contrib <- rivers %>%
   select(river, pct_contrib) %>%
   rename("Percent Contribution" = pct_contrib,
          River = river)
+```
 
+
+```{r, include = FALSE}
 kable(river_contrib)%>% 
   kable_styling(bootstrap_options = "striped", 
                 full_width = F,
@@ -56,54 +59,61 @@ kable(river_contrib)%>%
 #### b) Considering the rivers as the total inflow, what is the approximate turnover time for water in the Chesapeake Bay? Assume that tidal exchange has no net effect on the total volume of the Chesapeake Bay. 
 
 ```{r}
-ch_turnover <- ch_tot_V_m / ch_tot_inflow # seconds
+# Chesapeake Bay turnover in seconds
+ch_turnover <- ch_tot_V_m / ch_tot_inflow
 
+# Chesapeake Bay turnover in days
 ch_turn_days <- ch_turnover / (60 ^ 2 * 24)
 
+# Chesapeake Bay turnover in years
 ch_turn_yr <- ch_turn_days / 365.25
 ```
 
-The turnover time of the Chesapeake Bay is`r round(ch_turn_days, digits = 2)` days or `r round(ch_turn_yr, digits = 2)` years.
+The turnover time of the Chesapeake Bay is `r round(ch_turn_days, digits = 2)` days or `r round(ch_turn_yr, digits = 2)` years.
 
 #### c) What is the mean concentration (in μg/L) of total nitrogen (TN) and total phosphorus (TP) entering the Chesapeake Bay from each river (only SUS, POT and CHO) in the 1st quarter of 2010?
 
 ```{r}
-# In order, SUS, POT, CHO
-# tp_1980_q1 <- c(2.0 * 7200, 2.0 * 7200, 1.3 * 7200) # total nitrogen kg/d
+# Total Phosphorus kg/day, 2010, Quarter 1, in order, SUS, POT, CHO
+tp_2010_q1_kg_d <- c(1.6 * 7200, 1.4 * 4700, 1.5 * 40)
 
-tp_2010_q1_kg_d <- c(1.6 * 7200, 1.4 * 7200, 1.5 * 7200) # total nitrogen kg/d
-tn_2010_q1_kg_d <- c(1.5 * 7200, 1.5 * 7200, 1.75 * 7200) # total phosphorus kg/d
+# Total Nitrogen kg/day, 2010, Quarter 1, in order, SUS, POT, CHO
+tn_2010_q1_kg_d <- c(1.5 * 160000, 1.5 * 64000, 1.75 * 600)
 
-focus_rivers <- rivers %>%
+rivers_ug_L <- rivers %>%
+  # only the rivers of interest
   filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
-  cbind(#tp_1980_q1,
-        tp_2010_q1_kg_d,
+  # add TP and TN data from above
+  cbind(tp_2010_q1_kg_d,
         tn_2010_q1_kg_d) %>% 
+  # Conversions
   mutate(mean_flow_L_s = mean_flow_m3_s * 1000,
-         # tp_1980_q1_ug_d = tp_1980_q1_kg_d * 10 ^ 9,
          tp_2010_q1_ug_d = tp_2010_q1_kg_d * 10 ^ 9,
          tn_2010_q1_ug_d = tn_2010_q1_kg_d * 10 ^ 9) %>%
-  mutate(# tp_1980_q1_ug_s = tp_1980_q1_ug_d / 86400,
-         tp_2010_q1_ug_s = tp_2010_q1_ug_d / 86400,
-         tn_2010_q1_ug_s = tn_2010_q1_ug_d / 86400) %>% 
-  mutate(#mean_conc_tp_1980_q1_ug_L = tp_1980_q1_ug_s / mean_flow_L_s,
-         mean_conc_tp_2010_q1_ug_L = tp_2010_q1_ug_s / mean_flow_L_s,
+  mutate(tp_2010_q1_ug_s = tp_2010_q1_ug_d / 86400,
+         tn_2010_q1_ug_s = tn_2010_q1_ug_d / 86400) %>%
+  # Calculate Mean Concentration of TP and TN in each river
+  mutate(mean_conc_tp_2010_q1_ug_L = tp_2010_q1_ug_s / mean_flow_L_s,
          mean_conc_tn_2010_q1_ug_L = tn_2010_q1_ug_s / mean_flow_L_s)
 
-mean_conc_2010 <- focus_rivers %>%
+# Prep df for table
+mean_conc_2010 <- rivers_ug_L %>%
   select(river, mean_conc_tp_2010_q1_ug_L, mean_conc_tn_2010_q1_ug_L) %>%
   mutate(mean_conc_tp_2010_q1_ug_L = round(mean_conc_tp_2010_q1_ug_L, digits = 2),
          mean_conc_tn_2010_q1_ug_L= round(mean_conc_tn_2010_q1_ug_L, digits = 2)) %>% 
   rename("Total Phosphorus" = mean_conc_tp_2010_q1_ug_L,
          "Total Nitrogen" = mean_conc_tn_2010_q1_ug_L,
          River = river)
+```
 
+
+```{r, echo = FALSE}
 kable(mean_conc_2010)%>% 
   kable_styling(bootstrap_options = "striped", 
                 full_width = F,
                 position = "center"
                 ) %>% 
-  add_header_above(c("Table 2.\nMean Concentrations (μg/L) by River\nQuarter 1, 2010" = 3))
+  add_header_above(c("Table 2.\nMean Concentrations (μg/L) entering the Chesapeake Bay by River\nQuarter 1, 2010" = 3))
 
 ```
 
@@ -116,28 +126,60 @@ P_atomic <- 30.97 # g / mol
 N_ug_mol <- N_atomic * 10 ^ 6 # ug / mol
 P_ug_mol <- P_atomic * 10 ^ 6 # ug / mol
 
-mean_conc_2010_mol_L <- focus_rivers %>%
+mean_conc_2010_mol_L <- rivers_ug_L %>%
+  # Convert ug/L to mol/L
   mutate(mean_conc_tp_2010_q1_mol_L = mean_conc_tp_2010_q1_ug_L / P_ug_mol,
-         mean_conc_tn_2010_q1_mol_L = mean_conc_tn_2010_q1_ug_L / N_ug_mol) %>% 
+         mean_conc_tn_2010_q1_mol_L = mean_conc_tn_2010_q1_ug_L / N_ug_mol) %>%
+  # Prep for table
   select(river, mean_conc_tp_2010_q1_mol_L, mean_conc_tn_2010_q1_mol_L) %>%
-  # mutate(mean_conc_tp_2010_q1_mol_L = round(mean_conc_tp_2010_q1_mol_L, digits = 2),
-  #        mean_conc_tn_2010_q1_mol_L= round(mean_conc_tn_2010_q1_mol_L, digits = 2)) %>% 
+  mutate(mean_conc_tp_2010_q1_mol_L = formatC(mean_conc_tp_2010_q1_mol_L, format = "e", digits = 2),
+         mean_conc_tn_2010_q1_mol_L= formatC(mean_conc_tn_2010_q1_mol_L, format= "e", digits = 2)) %>%
   rename("Total Phosphorus" = mean_conc_tp_2010_q1_mol_L,
          "Total Nitrogen" = mean_conc_tn_2010_q1_mol_L,
          River = river)
+```
 
-  kable(mean_conc_2010_mol_L)%>% 
+
+```{r, echo = FALSE}
+kable(mean_conc_2010_mol_L)%>% 
   kable_styling(bootstrap_options = "striped", 
                 full_width = F,
                 position = "center"
                 ) %>% 
-  add_header_above(c("Table 3.\nMean Concentrations (mol/L) by River\nQuarter 1, 2010" = 3))
+  add_header_above(c("Table 3.\nMean Concentrations (mol/L) entering the Chesapeake Bay by River\nQuarter 1, 2010" = 3))
 
 ```
 
 
 #### e) How many kg of TN and TP are being discharged into the Chesapeake Bay from each river (only SUS, POT and CHO) in the 1st quarter of 2010? 
 
+```{r}
+t_q1_d <- 31 + # January
+  28 + # February
+  31 # March
+
+rivers_kg_q1 <- rivers %>%
+  # only the rivers of interest
+  filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
+  # add TP and TN data from above
+  cbind(tp_2010_q1_kg_d,
+        tn_2010_q1_kg_d) %>%
+  mutate(tp_2010_q1_kg_qtr = tp_2010_q1_kg_d * t_q1_d,
+         tn_2010_q1_kg_qtr = tn_2010_q1_kg_d * t_q1_d) %>%
+  select(river, tp_2010_q1_kg_qtr, tn_2010_q1_kg_qtr) %>%
+  rename("Total Phosphorus" = tp_2010_q1_kg_qtr,
+         "Total Nitrogen" = tn_2010_q1_kg_qtr,
+         River = river)
+```
+
+```{r echo = FALSE}
+kable(rivers_kg_q1)%>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                ) %>% 
+  add_header_above(c("Table 4.\nTotal Contribution (kg) entering the Chesapeake Bay by River \nQuarter 1, 2010" = 3))
+```
 
 #### f) Approximately what fraction of the total mass of N and P is coming in as dissolved N (DN) or dissolved P (DP) in the 1st quarter of 2010?
 
