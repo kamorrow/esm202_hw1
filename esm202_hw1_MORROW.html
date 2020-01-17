@@ -495,13 +495,185 @@ Choptank River
 ch_turn_days &lt;- ch_turnover / (60 ^ 2 * 24)
 
 ch_turn_yr &lt;- ch_turn_days / 365.25</code></pre>
-<p>429.37 days or 1.18 years</p>
+<p>The turnover time of the Chesapeake Bay is429.37 days or 1.18 years.</p>
 </div>
-<div id="c-what-is-the-mean-concentration-in-μgl-of-total-nitrogen-tn-and-tp-entering-the-chesapeake-bay-from-each-river-only-sus-pot-and-cho-in-the-1st-quarter-of-2010" class="section level4">
-<h4>c) What is the mean concentration (in μg/L) of total nitrogen (TN) and TP entering the Chesapeake Bay from each river (only SUS, POT and CHO) in the 1st quarter of 2010?</h4>
+<div id="c-what-is-the-mean-concentration-in-μgl-of-total-nitrogen-tn-and-total-phosphorus-tp-entering-the-chesapeake-bay-from-each-river-only-sus-pot-and-cho-in-the-1st-quarter-of-2010" class="section level4">
+<h4>c) What is the mean concentration (in μg/L) of total nitrogen (TN) and total phosphorus (TP) entering the Chesapeake Bay from each river (only SUS, POT and CHO) in the 1st quarter of 2010?</h4>
+<pre class="r"><code># In order, SUS, POT, CHO
+# tp_1980_q1 &lt;- c(2.0 * 7200, 2.0 * 7200, 1.3 * 7200) # total nitrogen kg/d
+
+tp_2010_q1_kg_d &lt;- c(1.6 * 7200, 1.4 * 7200, 1.5 * 7200) # total nitrogen kg/d
+tn_2010_q1_kg_d &lt;- c(1.5 * 7200, 1.5 * 7200, 1.75 * 7200) # total phosphorus kg/d
+
+focus_rivers &lt;- rivers %&gt;%
+  filter(river_abb %in% c(&quot;SUS&quot;, &quot;POT&quot;, &quot;CHO&quot;)) %&gt;%
+  cbind(#tp_1980_q1,
+        tp_2010_q1_kg_d,
+        tn_2010_q1_kg_d) %&gt;% 
+  mutate(mean_flow_L_s = mean_flow_m3_s * 1000,
+         # tp_1980_q1_ug_d = tp_1980_q1_kg_d * 10 ^ 9,
+         tp_2010_q1_ug_d = tp_2010_q1_kg_d * 10 ^ 9,
+         tn_2010_q1_ug_d = tn_2010_q1_kg_d * 10 ^ 9) %&gt;%
+  mutate(# tp_1980_q1_ug_s = tp_1980_q1_ug_d / 86400,
+         tp_2010_q1_ug_s = tp_2010_q1_ug_d / 86400,
+         tn_2010_q1_ug_s = tn_2010_q1_ug_d / 86400) %&gt;% 
+  mutate(#mean_conc_tp_1980_q1_ug_L = tp_1980_q1_ug_s / mean_flow_L_s,
+         mean_conc_tp_2010_q1_ug_L = tp_2010_q1_ug_s / mean_flow_L_s,
+         mean_conc_tn_2010_q1_ug_L = tn_2010_q1_ug_s / mean_flow_L_s)
+
+mean_conc_2010 &lt;- focus_rivers %&gt;%
+  select(river, mean_conc_tp_2010_q1_ug_L, mean_conc_tn_2010_q1_ug_L) %&gt;%
+  mutate(mean_conc_tp_2010_q1_ug_L = round(mean_conc_tp_2010_q1_ug_L, digits = 2),
+         mean_conc_tn_2010_q1_ug_L= round(mean_conc_tn_2010_q1_ug_L, digits = 2)) %&gt;% 
+  rename(&quot;Total Phosphorus&quot; = mean_conc_tp_2010_q1_ug_L,
+         &quot;Total Nitrogen&quot; = mean_conc_tn_2010_q1_ug_L,
+         River = river)
+
+kable(mean_conc_2010)%&gt;% 
+  kable_styling(bootstrap_options = &quot;striped&quot;, 
+                full_width = F,
+                position = &quot;center&quot;
+                ) %&gt;% 
+  add_header_above(c(&quot;Table 2.\nMean Concentrations (μg/L) by River\nQuarter 1, 2010&quot; = 3))</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Table 2.<br>Mean Concentrations (µg/L) by River<br>Quarter 1, 2010
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+River
+</th>
+<th style="text-align:right;">
+Total Phosphorus
+</th>
+<th style="text-align:right;">
+Total Nitrogen
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Susquehanna River
+</td>
+<td style="text-align:right;">
+116.45
+</td>
+<td style="text-align:right;">
+109.17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Potomac River
+</td>
+<td style="text-align:right;">
+336.22
+</td>
+<td style="text-align:right;">
+360.23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Choptank River
+</td>
+<td style="text-align:right;">
+31250.00
+</td>
+<td style="text-align:right;">
+36458.33
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="d-express-the-concentrations-of-tn-and-tp-also-in-terms-of-molesl-of-n-and-p." class="section level4">
 <h4>d) Express the concentrations of TN and TP also in terms of moles/L of N and P.</h4>
+<pre class="r"><code>N_atomic &lt;- 14.00 # g / mol
+P_atomic &lt;- 30.97 # g/ mol
+
+N_ug_mol &lt;- N_atomic * 10 ^ 6
+P_ug_mol &lt;- P_atomic * 10 ^ 6
+
+mean_conc_2010_mol_L &lt;- focus_rivers %&gt;%
+  mutate(mean_conc_tp_2010_q1_mol_L = mean_conc_tp_2010_q1_ug_L / P_ug_mol,
+         mean_conc_tn_2010_q1_mol_L = mean_conc_tn_2010_q1_ug_L / N_ug_mol) %&gt;% 
+  select(river, mean_conc_tp_2010_q1_mol_L, mean_conc_tn_2010_q1_mol_L) %&gt;%
+  # mutate(mean_conc_tp_2010_q1_mol_L = round(mean_conc_tp_2010_q1_mol_L, digits = 2),
+  #        mean_conc_tn_2010_q1_mol_L= round(mean_conc_tn_2010_q1_mol_L, digits = 2)) %&gt;% 
+  rename(&quot;Total Phosphorus&quot; = mean_conc_tp_2010_q1_mol_L,
+         &quot;Total Nitrogen&quot; = mean_conc_tn_2010_q1_mol_L,
+         River = river)
+
+  kable(mean_conc_2010_mol_L)%&gt;% 
+  kable_styling(bootstrap_options = &quot;striped&quot;, 
+                full_width = F,
+                position = &quot;center&quot;
+                ) %&gt;% 
+  add_header_above(c(&quot;Table 3.\nMean Concentrations (mol/L) by River\nQuarter 1, 2010&quot; = 3))</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Table 3.<br>Mean Concentrations (mol/L) by River<br>Quarter 1, 2010
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+River
+</th>
+<th style="text-align:right;">
+Total Phosphorus
+</th>
+<th style="text-align:right;">
+Total Nitrogen
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Susquehanna River
+</td>
+<td style="text-align:right;">
+0.0000038
+</td>
+<td style="text-align:right;">
+0.0000078
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Potomac River
+</td>
+<td style="text-align:right;">
+0.0000109
+</td>
+<td style="text-align:right;">
+0.0000257
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Choptank River
+</td>
+<td style="text-align:right;">
+0.0010090
+</td>
+<td style="text-align:right;">
+0.0026042
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="e-how-many-kg-of-tn-and-tp-are-being-discharged-into-the-chesapeake-bay-from-each-river-only-sus-pot-and-cho-in-the-1st-quarter-of-2010" class="section level4">
 <h4>e) How many kg of TN and TP are being discharged into the Chesapeake Bay from each river (only SUS, POT and CHO) in the 1st quarter of 2010?</h4>

@@ -109,6 +109,32 @@ kable(mean_conc_2010)%>%
 
 #### d) Express the concentrations of TN and TP also in terms of moles/L of N and P. 
 
+```{r}
+N_atomic <- 14.00 # g / mol
+P_atomic <- 30.97 # g / mol
+
+N_ug_mol <- N_atomic * 10 ^ 6 # ug / mol
+P_ug_mol <- P_atomic * 10 ^ 6 # ug / mol
+
+mean_conc_2010_mol_L <- focus_rivers %>%
+  mutate(mean_conc_tp_2010_q1_mol_L = mean_conc_tp_2010_q1_ug_L / P_ug_mol,
+         mean_conc_tn_2010_q1_mol_L = mean_conc_tn_2010_q1_ug_L / N_ug_mol) %>% 
+  select(river, mean_conc_tp_2010_q1_mol_L, mean_conc_tn_2010_q1_mol_L) %>%
+  # mutate(mean_conc_tp_2010_q1_mol_L = round(mean_conc_tp_2010_q1_mol_L, digits = 2),
+  #        mean_conc_tn_2010_q1_mol_L= round(mean_conc_tn_2010_q1_mol_L, digits = 2)) %>% 
+  rename("Total Phosphorus" = mean_conc_tp_2010_q1_mol_L,
+         "Total Nitrogen" = mean_conc_tn_2010_q1_mol_L,
+         River = river)
+
+  kable(mean_conc_2010_mol_L)%>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                ) %>% 
+  add_header_above(c("Table 3.\nMean Concentrations (mol/L) by River\nQuarter 1, 2010" = 3))
+
+```
+
 
 #### e) How many kg of TN and TP are being discharged into the Chesapeake Bay from each river (only SUS, POT and CHO) in the 1st quarter of 2010? 
 
