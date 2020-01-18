@@ -240,13 +240,48 @@ kable(rivers_solids)%>%
 ### 2. Water quality (consider only the SUS, POT and CHO or as indicated)
 
 #### a) Given the molar ratio of 100:16:1 [C:N:P], which nutrient would be limiting in each river during the 1st quarter of 2010?
+```{r}
+wq_limitation <- rivers_ug_L %>%
+  # Convert ug/L to mol/L
+  mutate(mean_conc_tp_2010_q1_mol_L = mean_conc_tp_2010_q1_ug_L / P_ug_mol,
+         mean_conc_tn_2010_q1_mol_L = mean_conc_tn_2010_q1_ug_L / N_ug_mol) %>%
+  mutate(ratio_N_P = mean_conc_tn_2010_q1_mol_L / mean_conc_tp_2010_q1_mol_L) %>%
+  mutate(limited = ifelse(ratio_N_P < 10, "Nitrogen", ifelse(ratio_N_P >30, "Phosphorus", "Not Limited"))) %>%
+  select(river, limited) %>%
+  rename(River = river,
+         "Limited by" = limited)
+```
 
+```{r echo = FALSE}
+kable(wq_limitation)%>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                ) %>% 
+  add_header_above(c("Table 7.\n Limiting Nutrients\nQuarter 1, 2010" = 2))
+```
 
 #### b) Given the molar ratio of 100:16:1 [C:N:P] and given the molar ratio of C:H:O for biomass as 1:2:1, is the dissolved nitrogen during the 1st quarter of 2012 likely to deplete oxygen in the Choptank River? Assume the dissolved oxygen is 4.5 mg/L in the receiving water at the point of discharge.
+
+```{r}
+DO_mg_L <- 4.5 # mg/L
+O_atomic <- 16 # g / mol
+
+DO_mol_L <- (DO_mg_L / 1000) / 16
+
+dn_cho_mol_L <- (rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] * rivers_dis_tot$Nitrogen[3]) / N_ug_mol
+
+dn_cho_mg <- rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] / 1000
+
+dn_cho_mol_L / DO_mol_L
+
+```
+
 
 #### c) Free Space
 
 #### d) Given the concentrations of TN and TP, how would you classify the eutrophication potential of each of the three rivers in terms in the Chesapeake Bay in 1980 and 2010? 
+
 
 #### e) What other important water quality parameter(s) are important to determine the health of aquatic organisms (e.g. fish) in these three tributaries? Briefly discuss at least 5.
 

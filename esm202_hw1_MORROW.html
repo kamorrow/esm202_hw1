@@ -787,9 +787,69 @@ Choptank River
 <h3>2. Water quality (consider only the SUS, POT and CHO or as indicated)</h3>
 <div id="a-given-the-molar-ratio-of-100161-cnp-which-nutrient-would-be-limiting-in-each-river-during-the-1st-quarter-of-2010" class="section level4">
 <h4>a) Given the molar ratio of 100:16:1 [C:N:P], which nutrient would be limiting in each river during the 1st quarter of 2010?</h4>
+<pre class="r"><code>wq_limitation &lt;- rivers_ug_L %&gt;%
+  # Convert ug/L to mol/L
+  mutate(mean_conc_tp_2010_q1_mol_L = mean_conc_tp_2010_q1_ug_L / P_ug_mol,
+         mean_conc_tn_2010_q1_mol_L = mean_conc_tn_2010_q1_ug_L / N_ug_mol) %&gt;%
+  mutate(ratio_N_P = mean_conc_tn_2010_q1_mol_L / mean_conc_tp_2010_q1_mol_L) %&gt;%
+  mutate(limited = ifelse(ratio_N_P &lt; 10, &quot;Nitrogen&quot;, ifelse(ratio_N_P &gt;30, &quot;Phosphorus&quot;, &quot;Not Limited&quot;))) %&gt;%
+  select(river, limited) %&gt;%
+  rename(River = river,
+         &quot;Limited by&quot; = limited)</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Table 7.<br> Limiting Nutrients<br>Quarter 1, 2010
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+River
+</th>
+<th style="text-align:left;">
+Limited by
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Susquehanna River
+</td>
+<td style="text-align:left;">
+Phosphorus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Potomac River
+</td>
+<td style="text-align:left;">
+Phosphorus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Choptank River
+</td>
+<td style="text-align:left;">
+Phosphorus
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="b-given-the-molar-ratio-of-100161-cnp-and-given-the-molar-ratio-of-cho-for-biomass-as-121-is-the-dissolved-nitrogen-during-the-1st-quarter-of-2012-likely-to-deplete-oxygen-in-the-choptank-river-assume-the-dissolved-oxygen-is-4.5-mgl-in-the-receiving-water-at-the-point-of-discharge." class="section level4">
 <h4>b) Given the molar ratio of 100:16:1 [C:N:P] and given the molar ratio of C:H:O for biomass as 1:2:1, is the dissolved nitrogen during the 1st quarter of 2012 likely to deplete oxygen in the Choptank River? Assume the dissolved oxygen is 4.5 mg/L in the receiving water at the point of discharge.</h4>
+<pre class="r"><code>DO_mg_L &lt;- 4.5 # mg/L
+O_atomic &lt;- 16 # g / mol
+
+DO_mol_L &lt;- (DO_mg_L / 1000) / 16
+
+tn_cho &lt;- rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] / N_ug_mol</code></pre>
 </div>
 <div id="c-free-space" class="section level4">
 <h4>c) Free Space</h4>
