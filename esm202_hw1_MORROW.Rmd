@@ -12,6 +12,7 @@ library(tidyverse)
 library(janitor)
 library(here)
 library(kableExtra)
+library(patchwork)
 ```
 
 ```{r, include = FALSE}
@@ -365,4 +366,56 @@ Elevated levels of nitrogen and phosphorus reduce dissolved oxygen levels, pushi
 
 
 #### g) For the data sets provided (1980 to 2010), discuss the relative improvement/degradation of each river in the Chesapeake Bay. 
+
+```{r}
+# Total Phosphorus kg/day, 1980, Quarter 1, in order, SUS, POT, CHO
+tp_1980_q1_kg_d <- c(2.0 * 7200, 2.0 * 4700, 1.3 * 40)
+
+# Total Nitrogen kg/day, 1980, Quarter 1, in order, SUS, POT, CHO
+tn_1980_q1_kg_d <- c(1.6 * 160000, 1.75 * 64000, 1.5 * 600)
+
+year <- rep(c(1980, 2010), each = 3)
+
+
+comp_1980 <- rivers %>%
+  # only the rivers of interest
+  filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
+  mutate(year = "1980") %>% 
+  cbind(tp_1980_q1_kg_d,
+        tn_1980_q1_kg_d) %>%
+  rename(total_nitrogen = tn_1980_q1_kg_d,
+         total_phosphorus = tp_1980_q1_kg_d)
+        
+comp_2010 <- rivers %>%
+  # only the rivers of interest
+  filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
+  mutate(year = "2010") %>% 
+  cbind(tp_2010_q1_kg_d,
+        tn_2010_q1_kg_d) %>%
+  rename(total_nitrogen = tn_2010_q1_kg_d,
+         total_phosphorus = tp_2010_q1_kg_d)
+
+comparison <- comp_1980 %>% 
+  bind_rows(comp_2010) %>%
+  mutate(mean_flow_m3_s = mean_flow_m3_s * 1000) %>%
+  rename(mean_flow_L_s = mean_flow_m3_s) %>%
+  mutate(total_nitrogen = total_nitrogen * 10 ^ 9  / 86400, # ug_s
+         total_phosphorus = total_phosphorus * 10 ^ 9 / 86400, # ug_s
+         tp_concentration_ug_L = total_phosphorus / mean_flow_L_s,
+         tn_concentration_ug_L = total_nitrogen / mean_flow_L_s)
+
+ggplot(data = comparison) +
+  geom_line(aes(x = year, y = tp_concentration_ug_L, color = river))
+
+ggplot(data = comparison) +
+  geom_col(aes(x = year, y = tp_concentration_ug_L, fill = river), show.legend = FALSE) +
+  facet_wrap(~river) +
+  labs(x = "", y = "Total Phosphorus (ug/L)") +
+
+ggplot(data = comparison) +
+  geom_col(aes(x = year, y = tn_concentration_ug_L, fill = river), show.legend = FALSE) +
+  facet_wrap(~river) +
+  labs(x = "Year", y = "Total Nitrogen (ug/L)")
+
+```
 
