@@ -1,8 +1,11 @@
 ---
-title: ESM 202 Assignment 1
-author: Keene Morrow
-date: 1/21/2020
-output: html_document
+title: "ESM 202 Assignment 1"
+author: "Keene Morrow"
+date: "1/21/2020"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -13,6 +16,7 @@ library(janitor)
 library(here)
 library(kableExtra)
 library(patchwork)
+library(wesanderson)
 ```
 
 ```{r, include = FALSE}
@@ -35,6 +39,7 @@ rivers <- read_csv(here("data", "river_info.csv")) %>%
 # Water Quality Parameters
 wq_param <- read_csv(here("data", "wq_param.csv"))
 ```
+
 ```{r, echo = FALSE}
 rivers_display <- rivers %>%
   rename("USGS Site ID" = usgs_site_id,
@@ -290,7 +295,7 @@ dn_cho_mol_L <- (rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] * rivers_dis_tot$Nitro
 
 dn_cho_mg <- rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] / 1000
 
-dn_cho_mol_L / DO_mol_L
+ratio_dn_DO_cho <- dn_cho_mol_L / DO_mol_L
 
 ratio_df_el <- c("C", "N", "P", "H", "O")
 ratio_df_num <- c(100, 16, 1, 200, 100)
@@ -307,7 +312,7 @@ ratio <- as.data.frame(ratio_df_el) %>%
          std_ratio = ratio_df_num)
 ```
 
-The maximum dissolved nitrogen level that would not deplete dissolved oxygen at `r DO_mol_L` mol/L is `r ratio$DN_lelve[2]` mol/L.  The actual level of dissolved nitrogen in the Choptank River in the first quarter of 2012 was `r dn_cho_mol_L` mol/L.  Thus, it is expected that dissolved oxygen would be completely depleted.
+The maximum dissolved nitrogen level that would not deplete dissolved oxygen at `r formatC(DO_mol_L, format = "e", digits = 2)` mol/L is `r formatC(ratio$DN_level[2], format = "e", digits = 2)` mol/L.  The actual level of dissolved nitrogen in the Choptank River in the first quarter of 2012 was `r formatC(dn_cho_mol_L, format = "e", digits = 2)` mol/L.  Thus, it is expected that dissolved oxygen would be completely depleted.
 
 #### c) Free Space
 
@@ -362,12 +367,12 @@ In both 1980 and 2010 all three rivers had sufficient total nitrogen and total p
 
 #### f) Given the loadings of N and P, qualitatively discuss the likely redox conditions in the Chesapeake Bay sediments. What are the implications (briefly)? 
 
-Elevated levels of nitrogen and phosphorus reduce dissolved oxygen levels, pushing conditions towards a more reducing state.  The redox state of a water body influences the availability and toxicity of elements.
+Elevated levels of nitrogen and phosphorus reduce dissolved oxygen levels, pushing conditions towards a more reducing state.  The redox state of a water body influences the availability and toxicity of elements.  A reducing state is associated with the presence of additional free metals, which may negatively impact human health and the health of organisms in water bodies.
 
 
 #### g) For the data sets provided (1980 to 2010), discuss the relative improvement/degradation of each river in the Chesapeake Bay. 
 
-```{r}
+```{r, echo = FALSE}
 # Total Phosphorus kg/day, 1980, Quarter 1, in order, SUS, POT, CHO
 tp_1980_q1_kg_d <- c(2.0 * 7200, 2.0 * 4700, 1.3 * 40)
 
@@ -401,21 +406,27 @@ comparison <- comp_1980 %>%
   rename(mean_flow_L_s = mean_flow_m3_s) %>%
   mutate(total_nitrogen = total_nitrogen * 10 ^ 9  / 86400, # ug_s
          total_phosphorus = total_phosphorus * 10 ^ 9 / 86400, # ug_s
-         tp_concentration_ug_L = total_phosphorus / mean_flow_L_s,
-         tn_concentration_ug_L = total_nitrogen / mean_flow_L_s)
+         tp_concentration_mol_L = (total_phosphorus / mean_flow_L_s) / P_ug_mol,
+         tn_concentration_mol_L = (total_nitrogen / mean_flow_L_s) / N_ug_mol,
+         river_simple = ifelse(river == "Susquehanna River", "Susquehanna",
+                               ifelse(river == "Choptank River", "Choptank", "Potomac")))
 
 ggplot(data = comparison) +
-  geom_line(aes(x = year, y = tp_concentration_ug_L, color = river))
+  geom_col(aes(x = year, y = tp_concentration_mol_L, fill = river), show.legend = FALSE) +
+  facet_wrap(~river_simple) +
+  labs(x = "", y = "Total Phosphorus (mol/L)") +
+  scale_fill_manual(values = wes_palette(n=3, name="FantasticFox1")) +
 
 ggplot(data = comparison) +
-  geom_col(aes(x = year, y = tp_concentration_ug_L, fill = river), show.legend = FALSE) +
-  facet_wrap(~river) +
-  labs(x = "", y = "Total Phosphorus (ug/L)") +
+  geom_col(aes(x = year, y = tn_concentration_mol_L, fill = river), show.legend = FALSE) +
+  facet_wrap(~river_simple) +
+  labs(x = "", y = "Total Nitrogen (mol/L)") +
+  scale_fill_manual(values = wes_palette(n=3, name="FantasticFox1")) +
 
-ggplot(data = comparison) +
-  geom_col(aes(x = year, y = tn_concentration_ug_L, fill = river), show.legend = FALSE) +
-  facet_wrap(~river) +
-  labs(x = "Year", y = "Total Nitrogen (ug/L)")
+  plot_annotation(title = "Nutrient Level Change in Select Rivers Contributing to the Chesapeake Bay",
+                  subtitle = "1980 vs. 2010",
+                  caption = "Keene Morrow")
 
 ```
 
+Between 1980 and 2010 the Potomac and Susquehanna Rivers saw reductions in both total phosphorus and total nitrogen, with the greatest reduction being in total phosphorus in the Potomac.  By contrast, both total phosphorus and total nitrogen increased in the Choptank River in the same time period. This difference is liekly due to the Choptank's contributing area being exclusively agricultural land versus the Potomac being urban in addition to agricultural and the Susquehanna being forested and rural in addition to agricultural.  It is expected that the princinpal source of excess nitrogen and phosphorus in the rivers is agricultural runoff.
