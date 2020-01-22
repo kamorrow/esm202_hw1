@@ -353,7 +353,16 @@ In both 1980 and 2010 all three rivers had sufficient total nitrogen and total p
 
 #### e) What other water quality parameter(s) are important to determine the health of aquatic organisms (e.g. fish) in these three tributaries? Briefly discuss at least 5.
 
+- The pH of water controls what forms of elements are present and therefore are available to organisms or implicated in natural processes.  Low pH or acidic conditions speeds weathering and may influence the hardness of water.  High pH or alkaline conditions may increase metal precipitation and NH~3~.
+- Cations are ions with positive charges.  They have a variety of valencies, with sodium and potassium representing common monovalent cations and magnesium and calcium representing divalent cations.  Hard water has high concentrations of calcium and magnesium, which may result in deposits forming on fixtures and reduce the efficacy of detergents.  Soft water has low concentrations of ions, especially calcium and magnesium, and may be corrosive.  The public health concern of soft water can be seen in the Flint Water Crisis, where soft water corroded pipes, exposing residents to lead. Anions, negatively charged ions, are present in equal proportion to cations.
+- Tubidity is more than just suspended solids.  This measures the ability of light to penetrate the water quality.  Turbidity influences the ability of organisms to survive in a water body, with different organisms adapted for different levels of turbidity.  Elevated turbidity may come from runoff, particularly in places that previously had groundcover and lost it, perhaps through a fire.  Reduced turbidity may come from the introduction of an invasive species, such as the zebra mussel in the Hudson River, or from a change in flow velocity.
+- Abnormally elevated temperature in water bodies is often caused by human activities such as the discharge of water from power plants.  High water temperatures are associated with reduced dissolved oxygen levels, which in turn negatively affect organisms living in the water body.  A resulting fish kill, or mass die off of fish, can cause a cascade of impacts due to the disruption of the food web and resulting increase in decomposable matter.
+- Salinity is typically measured as a function of water density, with denser water having a more dissolved salts.  Organisms typically prefer a certain range of salinities and disruptions to salinity disrupt the osmotic processes that maintain their cells.  Elevated salinity also reduces the suitability of water for human consumption and increases the cost of water treatment.  Saline conditions may occur naturally or be influenced by runoff.
 
 #### f) Given the loadings of N and P, qualitatively discuss the likely redox conditions in the Chesapeake Bay sediments. What are the implications (briefly)? 
 
+Elevated levels of nitrogen and phosphorus reduce dissolved oxygen levels, pushing conditions towards a more reducing state.  The redox state of a water body influences the availability and toxicity of elements.
+
+
 #### g) For the data sets provided (1980 to 2010), discuss the relative improvement/degradation of each river in the Chesapeake Bay. 
+
