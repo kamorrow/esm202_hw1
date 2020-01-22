@@ -34,6 +34,22 @@ rivers <- read_csv(here("data", "river_info.csv")) %>%
 # Water Quality Parameters
 wq_param <- read_csv(here("data", "wq_param.csv"))
 ```
+```{r, echo = FALSE}
+rivers_display <- rivers %>%
+  rename("USGS Site ID" = usgs_site_id,
+         River = river,
+         "River Abbreviation" = river_abb,
+         Location = location,
+         State = state,
+         "Mean Flow (m3/s)" = mean_flow_m3_s)
+
+kable(rivers_display)%>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F,
+                position = "center"
+                ) %>% 
+  add_header_above(c("Chesapeake Bay Contributing Rivers" = 6))
+```
 
 ### 1. Mass Balance
 
@@ -47,7 +63,7 @@ river_contrib <- rivers %>%
 ```
 
 
-```{r, include = FALSE}
+```{r, echo = FALSE}
 kable(river_contrib)%>% 
   kable_styling(bootstrap_options = "striped", 
                 full_width = F,
@@ -275,15 +291,67 @@ dn_cho_mg <- rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] / 1000
 
 dn_cho_mol_L / DO_mol_L
 
+ratio_df_el <- c("C", "N", "P", "H", "O")
+ratio_df_num <- c(100, 16, 1, 200, 100)
+ratio_cho_DO <- c("", "", "", "", DO_mol_L)
+ratio_cho_DN <- c("", dn_cho_mol_L, "", "", "")
+
+ratio <- as.data.frame(ratio_df_el) %>%
+  cbind(ratio_df_num) %>%
+  mutate(DO_ratio = ratio_df_num / 100,
+         DN_ratio = ratio_df_num / 16) %>%
+  mutate(DO_level = DO_ratio * DO_mol_L,
+         DN_level = DN_ratio * dn_cho_mol_L) %>%
+  rename(element = ratio_df_el,
+         std_ratio = ratio_df_num)
 ```
 
+The maximum dissolved nitrogen level that would not deplete dissolved oxygen at `r DO_mol_L` mol/L is `r ratio$DN_lelve[2]` mol/L.  The actual level of dissolved nitrogen in the Choptank River in the first quarter of 2012 was `r dn_cho_mol_L` mol/L.  Thus, it is expected that dissolved oxygen would be completely depleted.
 
 #### c) Free Space
 
 #### d) Given the concentrations of TN and TP, how would you classify the eutrophication potential of each of the three rivers in terms in the Chesapeake Bay in 1980 and 2010? 
+```{r}
+# Total Phosphorus kg/day, 1980, Quarter 1, in order, SUS, POT, CHO
+tp_1980_q1_kg_d <- c(2.0 * 7200, 2.0 * 4700, 1.3 * 40)
+
+# Total Nitrogen kg/day, 1980, Quarter 1, in order, SUS, POT, CHO
+tn_1980_q1_kg_d <- c(1.6 * 160000, 1.75 * 64000, 1.5 * 600)
 
 
-#### e) What other important water quality parameter(s) are important to determine the health of aquatic organisms (e.g. fish) in these three tributaries? Briefly discuss at least 5.
+eutrophication <- rivers %>%
+  # only the rivers of interest
+  filter(river_abb %in% c("SUS", "POT", "CHO")) %>%
+  # add TP and TN data from above
+  cbind(tp_1980_q1_kg_d,
+        tn_1980_q1_kg_d,
+        tp_2010_q1_kg_d,
+        tn_2010_q1_kg_d) %>% 
+  # Conversions
+  mutate(mean_flow_L_s = mean_flow_m3_s * 1000,
+         tp_1980_q1_ug_d = tp_1980_q1_kg_d * 10 ^ 9,
+         tn_1980_q1_ug_d = tn_1980_q1_kg_d * 10 ^ 9,
+         tp_2010_q1_ug_d = tp_2010_q1_kg_d * 10 ^ 9,
+         tn_2010_q1_ug_d = tn_2010_q1_kg_d * 10 ^ 9) %>%
+  mutate(tp_1980_q1_ug_s = tp_1980_q1_ug_d / 86400,
+         tn_1980_q1_ug_s = tn_1980_q1_ug_d / 86400,
+         tp_2010_q1_ug_s = tp_2010_q1_ug_d / 86400,
+         tn_2010_q1_ug_s = tn_2010_q1_ug_d / 86400) %>%
+  # Calculate Mean Concentration of TP and TN in each river
+  mutate(mean_conc_tp_1980_q1_ug_L = tp_1980_q1_ug_s / mean_flow_L_s,
+         mean_conc_tn_1980_q1_ug_L = tn_1980_q1_ug_s / mean_flow_L_s,
+         mean_conc_tp_2010_q1_ug_L = tp_2010_q1_ug_s / mean_flow_L_s,
+         mean_conc_tn_2010_q1_ug_L = tn_2010_q1_ug_s / mean_flow_L_s) %>%
+  mutate(ratio_N_P_1980 = mean_conc_tn_1980_q1_ug_L / mean_conc_tp_1980_q1_ug_L,
+         ratio_N_P_2010 = mean_conc_tn_2010_q1_ug_L / mean_conc_tp_2010_q1_ug_L,
+         eu_potential_1980 = ifelse(mean_conc_tp_1980_q1_ug_L > 15, ifelse(mean_conc_tp_1980_q1_ug_L > 100, "Potentially Hypereutrophic", "Likely Eutrophic"), "Unlikely Eutrophic" ),
+         eu_potential_2010 = ifelse(mean_conc_tp_2010_q1_ug_L > 15, ifelse(mean_conc_tp_2010_q1_ug_L > 100, "Potentially Hypereutrophic", "Likely Eutrophic"), "Unlikely Eutrophic" ))
+```
+
+In both 1980 and 2010 all three rivers had sufficient total nitrogen and total phosphorus levels to have a high eutrophication potential, to the extent that they were all potentially hypertrophic in both years.
+
+
+#### e) What other water quality parameter(s) are important to determine the health of aquatic organisms (e.g. fish) in these three tributaries? Briefly discuss at least 5.
 
 
 #### f) Given the loadings of N and P, qualitatively discuss the likely redox conditions in the Chesapeake Bay sediments. What are the implications (briefly)? 

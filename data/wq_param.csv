@@ -1,5 +1,4 @@
 Parameter code,Parameter name,Abbreviation,Unit 
-,,,
 P00600 ,"Total nitrogen, water, unfiltered",TN,mg N/L
 P00601 ,"Total nitrogen, suspended sediment",Total Particulate N,mg N/L
 P00602  ,"Total nitrogen, water, filtered",Dissolved N,mg N/L

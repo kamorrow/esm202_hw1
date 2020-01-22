@@ -378,6 +378,219 @@ summary {
 </div>
 
 
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="6">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Chesapeake Bay Contributing Rivers
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:right;">
+USGS Site ID
+</th>
+<th style="text-align:left;">
+River
+</th>
+<th style="text-align:left;">
+River Abbreviation
+</th>
+<th style="text-align:left;">
+Location
+</th>
+<th style="text-align:left;">
+State
+</th>
+<th style="text-align:right;">
+Mean Flow (m3/s)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1578310
+</td>
+<td style="text-align:left;">
+Susquehanna River
+</td>
+<td style="text-align:left;">
+SUS
+</td>
+<td style="text-align:left;">
+Conowingo
+</td>
+<td style="text-align:left;">
+MD
+</td>
+<td style="text-align:right;">
+1145
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1646580
+</td>
+<td style="text-align:left;">
+Potomac River
+</td>
+<td style="text-align:left;">
+POT
+</td>
+<td style="text-align:left;">
+Chain Br
+</td>
+<td style="text-align:left;">
+DC
+</td>
+<td style="text-align:right;">
+347
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2035000
+</td>
+<td style="text-align:left;">
+James River
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Cartersville
+</td>
+<td style="text-align:left;">
+VA
+</td>
+<td style="text-align:right;">
+200
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1668000
+</td>
+<td style="text-align:left;">
+Rappahannock River
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Fredericksburg
+</td>
+<td style="text-align:left;">
+VA
+</td>
+<td style="text-align:right;">
+49
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2041650
+</td>
+<td style="text-align:left;">
+Appomattox River
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Matoaca
+</td>
+<td style="text-align:left;">
+VA
+</td>
+<td style="text-align:right;">
+34
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1673000
+</td>
+<td style="text-align:left;">
+Pamunkey River
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Hanover
+</td>
+<td style="text-align:left;">
+VA
+</td>
+<td style="text-align:right;">
+28
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1674500
+</td>
+<td style="text-align:left;">
+Mattaponi River
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Beulahville
+</td>
+<td style="text-align:left;">
+VA
+</td>
+<td style="text-align:right;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1594440
+</td>
+<td style="text-align:left;">
+Patuxent River
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Bowie
+</td>
+<td style="text-align:left;">
+MD
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1491000
+</td>
+<td style="text-align:left;">
+Choptank River
+</td>
+<td style="text-align:left;">
+CHO
+</td>
+<td style="text-align:left;">
+Greensboro
+</td>
+<td style="text-align:left;">
+MD
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+</tbody>
+</table>
 <div id="mass-balance" class="section level3">
 <h3>1. Mass Balance</h3>
 <div id="a-calculate-the-percent-contribution-of-each-river-to-the-total-water-flux-into-the-chesapeake-bay." class="section level4">
@@ -387,6 +600,99 @@ summary {
   select(river, pct_contrib) %&gt;%
   rename(&quot;Percent Contribution&quot; = pct_contrib,
          River = river)</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Table 1.<br>Percent Contribution to Chesapeake Bay Flux by River
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+River
+</th>
+<th style="text-align:right;">
+Percent Contribution
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Susquehanna River
+</td>
+<td style="text-align:right;">
+62.47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Potomac River
+</td>
+<td style="text-align:right;">
+18.93
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+James River
+</td>
+<td style="text-align:right;">
+10.91
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rappahannock River
+</td>
+<td style="text-align:right;">
+2.67
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Appomattox River
+</td>
+<td style="text-align:right;">
+1.85
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pamunkey River
+</td>
+<td style="text-align:right;">
+1.53
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mattaponi River
+</td>
+<td style="text-align:right;">
+0.82
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Patuxent River
+</td>
+<td style="text-align:right;">
+0.60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Choptank River
+</td>
+<td style="text-align:right;">
+0.22
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="b-considering-the-rivers-as-the-total-inflow-what-is-the-approximate-turnover-time-for-water-in-the-chesapeake-bay-assume-that-tidal-exchange-has-no-net-effect-on-the-total-volume-of-the-chesapeake-bay." class="section level4">
 <h4>b) Considering the rivers as the total inflow, what is the approximate turnover time for water in the Chesapeake Bay? Assume that tidal exchange has no net effect on the total volume of the Chesapeake Bay.</h4>
@@ -849,16 +1155,70 @@ O_atomic &lt;- 16 # g / mol
 
 DO_mol_L &lt;- (DO_mg_L / 1000) / 16
 
-tn_cho &lt;- rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] / N_ug_mol</code></pre>
+dn_cho_mol_L &lt;- (rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] * rivers_dis_tot$Nitrogen[3]) / N_ug_mol
+
+dn_cho_mg &lt;- rivers_ug_L$mean_conc_tn_2010_q1_ug_L[3] / 1000
+
+dn_cho_mol_L / DO_mol_L</code></pre>
+<pre><code>## [1] 0.6712963</code></pre>
+<pre class="r"><code>ratio_df_el &lt;- c(&quot;C&quot;, &quot;N&quot;, &quot;P&quot;, &quot;H&quot;, &quot;O&quot;)
+ratio_df_num &lt;- c(100, 16, 1, 200, 100)
+ratio_cho_DO &lt;- c(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, DO_mol_L)
+ratio_cho_DN &lt;- c(&quot;&quot;, dn_cho_mol_L, &quot;&quot;, &quot;&quot;, &quot;&quot;)
+
+ratio &lt;- as.data.frame(ratio_df_el) %&gt;%
+  cbind(ratio_df_num) %&gt;%
+  mutate(DO_ratio = ratio_df_num / 100,
+         DN_ratio = ratio_df_num / 16) %&gt;%
+  mutate(DO_level = DO_ratio * DO_mol_L,
+         DN_level = DN_ratio * dn_cho_mol_L) %&gt;%
+  rename(element = ratio_df_el,
+         std_ratio = ratio_df_num)</code></pre>
+<p>The maximum dissolved nitrogen level that would not deplete dissolved oxygen at 2.812510^{-4} mol/L is mol/L. The actual level of dissolved nitrogen in the Choptank River in the first quarter of 2012 was 1.888020810^{-4} mol/L. Thus, it is expected that dissolved oxygen would be completely depleted.</p>
 </div>
 <div id="c-free-space" class="section level4">
 <h4>c) Free Space</h4>
 </div>
 <div id="d-given-the-concentrations-of-tn-and-tp-how-would-you-classify-the-eutrophication-potential-of-each-of-the-three-rivers-in-terms-in-the-chesapeake-bay-in-1980-and-2010" class="section level4">
 <h4>d) Given the concentrations of TN and TP, how would you classify the eutrophication potential of each of the three rivers in terms in the Chesapeake Bay in 1980 and 2010?</h4>
+<pre class="r"><code># Total Phosphorus kg/day, 1980, Quarter 1, in order, SUS, POT, CHO
+tp_1980_q1_kg_d &lt;- c(2.0 * 7200, 2.0 * 4700, 1.3 * 40)
+
+# Total Nitrogen kg/day, 1980, Quarter 1, in order, SUS, POT, CHO
+tn_1980_q1_kg_d &lt;- c(1.6 * 160000, 1.75 * 64000, 1.5 * 600)
+
+
+eutrophication &lt;- rivers %&gt;%
+  # only the rivers of interest
+  filter(river_abb %in% c(&quot;SUS&quot;, &quot;POT&quot;, &quot;CHO&quot;)) %&gt;%
+  # add TP and TN data from above
+  cbind(tp_1980_q1_kg_d,
+        tn_1980_q1_kg_d,
+        tp_2010_q1_kg_d,
+        tn_2010_q1_kg_d) %&gt;% 
+  # Conversions
+  mutate(mean_flow_L_s = mean_flow_m3_s * 1000,
+         tp_1980_q1_ug_d = tp_1980_q1_kg_d * 10 ^ 9,
+         tn_1980_q1_ug_d = tn_1980_q1_kg_d * 10 ^ 9,
+         tp_2010_q1_ug_d = tp_2010_q1_kg_d * 10 ^ 9,
+         tn_2010_q1_ug_d = tn_2010_q1_kg_d * 10 ^ 9) %&gt;%
+  mutate(tp_1980_q1_ug_s = tp_1980_q1_ug_d / 86400,
+         tn_1980_q1_ug_s = tn_1980_q1_ug_d / 86400,
+         tp_2010_q1_ug_s = tp_2010_q1_ug_d / 86400,
+         tn_2010_q1_ug_s = tn_2010_q1_ug_d / 86400) %&gt;%
+  # Calculate Mean Concentration of TP and TN in each river
+  mutate(mean_conc_tp_1980_q1_ug_L = tp_1980_q1_ug_s / mean_flow_L_s,
+         mean_conc_tn_1980_q1_ug_L = tn_1980_q1_ug_s / mean_flow_L_s,
+         mean_conc_tp_2010_q1_ug_L = tp_2010_q1_ug_s / mean_flow_L_s,
+         mean_conc_tn_2010_q1_ug_L = tn_2010_q1_ug_s / mean_flow_L_s) %&gt;%
+  mutate(ratio_N_P_1980 = mean_conc_tn_1980_q1_ug_L / mean_conc_tp_1980_q1_ug_L,
+         ratio_N_P_2010 = mean_conc_tn_2010_q1_ug_L / mean_conc_tp_2010_q1_ug_L,
+         eu_potential_1980 = ifelse(mean_conc_tp_1980_q1_ug_L &gt; 15, ifelse(mean_conc_tp_1980_q1_ug_L &gt; 100, &quot;Potentially Hypereutrophic&quot;, &quot;Likely Eutrophic&quot;), &quot;Unlikely Eutrophic&quot; ),
+         eu_potential_2010 = ifelse(mean_conc_tp_2010_q1_ug_L &gt; 15, ifelse(mean_conc_tp_2010_q1_ug_L &gt; 100, &quot;Potentially Hypereutrophic&quot;, &quot;Likely Eutrophic&quot;), &quot;Unlikely Eutrophic&quot; ))</code></pre>
+<p>In both 1980 and 2010 all three rivers had sufficient total nitrogen and total phosphorus levels to have a high eutrophication potential, to the extent that they were all potentially hypertrophic in both years.</p>
 </div>
-<div id="e-what-other-important-water-quality-parameters-are-important-to-determine-the-health-of-aquatic-organisms-e.g.-fish-in-these-three-tributaries-briefly-discuss-at-least-5." class="section level4">
-<h4>e) What other important water quality parameter(s) are important to determine the health of aquatic organisms (e.g. fish) in these three tributaries? Briefly discuss at least 5.</h4>
+<div id="e-what-other-water-quality-parameters-are-important-to-determine-the-health-of-aquatic-organisms-e.g.-fish-in-these-three-tributaries-briefly-discuss-at-least-5." class="section level4">
+<h4>e) What other water quality parameter(s) are important to determine the health of aquatic organisms (e.g. fish) in these three tributaries? Briefly discuss at least 5.</h4>
 </div>
 <div id="f-given-the-loadings-of-n-and-p-qualitatively-discuss-the-likely-redox-conditions-in-the-chesapeake-bay-sediments.-what-are-the-implications-briefly" class="section level4">
 <h4>f) Given the loadings of N and P, qualitatively discuss the likely redox conditions in the Chesapeake Bay sediments. What are the implications (briefly)?</h4>
